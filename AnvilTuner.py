@@ -32,11 +32,11 @@ def runSim():
     apPrev = ap #previous angular pos
 
     #PID variables
-    intg = 0 #integral
-    PIDout = 0 #PID output
+    #intg = 0 #integral
+    #PIDout = 0 #PID output
 
     #other variables
-    dR = 3.1416 / 180 # degrees to radians
+    dR = 3.1416 / 180.0 # degrees to radians
     off = o.get() #motor mount offset
     M = 5 #max servo range
     m = -M #min servo range
@@ -67,8 +67,8 @@ def runSim():
 
         av += aa * dt
 
-        if(w.get() > 0):
-             av += (random.randrange(-w.get(), w.get()) / 100.0)
+        if(n.get() > 0):
+             av += (random.randrange(-n.get(), n.get()) / 100.0)
 
         ap += av * dt
 
@@ -124,13 +124,13 @@ o = Scale(window, from_ = -3, to = 3, orient = HORIZONTAL)
 oLabel.grid(row = 2, column = 0)
 o.grid(row = 2, column = 1)
 
-wLabel = Label(window, text = "Wind(Noise):  ")
-w = Scale(window, from_ = 0, to = 100, orient = HORIZONTAL)
-wLabel.grid(row = 2, column = 2)
-w.grid(row = 2, column = 3)
+nLabel = Label(window, text = "Noise:  ")
+n = Scale(window, from_ = 0, to = 100, orient = HORIZONTAL)
+nLabel.grid(row = 2, column = 2)
+n.grid(row = 2, column = 3)
 
-fLabel = Label(window, text = "Force:  ")
-f = Scale(window, from_ = 0, to = 20, orient = HORIZONTAL)
+fLabel = Label(window, text = "Force (N):  ")
+f = Scale(window, from_ = 1, to = 20, orient = HORIZONTAL)
 fLabel.grid(row = 3, column = 0)
 f.grid(row = 3, column = 1)
 
@@ -154,5 +154,13 @@ blankRow.grid(row = 5, column = 0)
 
 runButton = Button(window, text = "Start Sim", command = runSim, bg = "green")
 runButton.grid(row = 6, column = 1)
+
+blankRow2 = Label(window, text = " ")
+blankRow2.grid(row = 7, column = 0)
+blankRow3 = Label(window, text = " ")
+blankRow3.grid(row = 8, column = 0)
+
+cLabel = Label(window, text = "You found me!")
+cLabel.grid(row = 9, column = 0)
 
 window.mainloop()
