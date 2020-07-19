@@ -7,10 +7,15 @@ Use at your own risk
 Some information about the sliders:
 Kp, Kd, and Inertia are all multiplied by 100, ie: if the slider says Kp = 115, Kp is actually 1.15
 
-One more thing, When you download the exe, Windows will do everything in its power to make sure that you don't open it.
+When you download the exe, Windows will do everything in its power to make sure that you don't open it.
 I promise that there are no malicious things included with the exe file.
 
+The Version number is determined by the size of the update. If the update is only minor, the version goes up by 0.01, 
+if the update adds a lot, or fixes major bugs, the version goes up by 0.1
+
 # Virtual Env Option:
+
+Done by prettytrue on the BPS discord
 
 - Python3  (or python 2 with virtualenv installed (`pip install virtualenv`))
 
