@@ -7,6 +7,6 @@ Use at your own risk
 Some information about the sliders:
 Kp, Kd, and Inertia are all multiplied by 100, ie: if the slider says Kp = 115, Kp is actually 1.15
 
-One more thing, I am trying to make an exe file to make it easier for people to use, but I am having troubles with file sizes.
-I will try to get that working in the next few days
+One more thing, When you download the exe, Windows will do everything in its power to make sure that you don't open it.
+I promise that there are no malicious things included with the exe file.
 
