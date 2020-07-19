@@ -10,3 +10,19 @@ Kp, Kd, and Inertia are all multiplied by 100, ie: if the slider says Kp = 115, 
 One more thing, When you download the exe, Windows will do everything in its power to make sure that you don't open it.
 I promise that there are no malicious things included with the exe file.
 
+# Virtual Env Option:
+
+- Python3  (or python 2 with virtualenv installed (`pip install virtualenv`))
+
+Windows:
+```
+C:/...> cd <this_repo>
+C:/...> run.bat
+...
+```
+
+Unix:
+```
+$> cd <this_repo>
+$> ./run
+```
