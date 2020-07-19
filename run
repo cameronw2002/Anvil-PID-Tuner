@@ -1,0 +1,8 @@
+#!/bin/bash
+# Note: This could use a test...
+if [ ! -d "./_env" ] then
+    python -m venv _env
+fi
+source _env/bin/activate
+python install -r requirements.txt
+python ./AnvilTuner.py
