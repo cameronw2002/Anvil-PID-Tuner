@@ -13,7 +13,7 @@ import random
 
 window = Tk()
 
-window.title("Anvil Tuner 0.1")
+window.title("Anvil Tuner 0.11")
 window.geometry("500x300")
     
 def runSim():
@@ -28,12 +28,9 @@ def runSim():
     aa = 0 #angular accel
     av = AV.get()
     ap = AP.get()
+    aaPrev = ap #previous angular acc
     avPrev = av #previous angular vel
     apPrev = ap #previous angular pos
-
-    #PID variables
-    #intg = 0 #integral
-    #PIDout = 0 #PID output
 
     #other variables
     dR = 3.1416 / 180.0 # degrees to radians
@@ -44,10 +41,10 @@ def runSim():
     #matplotlib stuff
     ts = np.arange(0, T.get(), dt)
     ap_plot = []
-    #av_plot = []
     pid_plot = []
     zero_plot = []
 
+    #close the previous graph
     plt.close()
     
     while(count < T.get()):
@@ -58,6 +55,7 @@ def runSim():
         if(PIDout < m + off):
              PIDout = m + off
 
+        aaPrev = aa
         apPrev = ap
         avPrev = av
          
@@ -65,12 +63,12 @@ def runSim():
             
         aa = t / i
 
-        av += aa * dt
+        av += ((aa + aaPrev) / 2) * dt
 
         if(n.get() > 0):
              av += (random.randrange(-n.get(), n.get()) / 100.0)
 
-        ap += av * dt
+        ap += ((av + avPrev) / 2) * dt
 
         ap_plot.append(ap)
         pid_plot.append(PIDout)
@@ -95,7 +93,7 @@ def runSim():
     plt.ylabel("Angle (D)")
     plt.xlabel("Time (S)")
     ax.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
-    plt.title('Anvil Tuner 0.1')
+    plt.title('Anvil Tuner 0.11')
     plt.legend()
     plt.show()
 
