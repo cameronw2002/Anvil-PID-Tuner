@@ -11,8 +11,8 @@ import random
 
 window = Tk()
 
-window.title("Anvil Tuner 0.31")
-window.geometry("525x320")
+window.title("Anvil Tuner 0.41")
+window.geometry("800x275")
 
 plotAngVel = False
 night = True
@@ -21,6 +21,7 @@ back = "#383838"
 fore = "white"
 
 Kp2 = DoubleVar()
+Ki2 = DoubleVar()
 Kd2 = DoubleVar()
 AP2 = IntVar()
 AV2 = IntVar()
@@ -36,6 +37,7 @@ y2 = IntVar()
 window.configure(bg = back)
 
 KpLabel = Label(window, text = "Kp:  ", bg = back, fg = fore)
+KiLabel = Label(window, text = "Ki:  ", bg = back, fg = fore)
 KdLabel = Label(window, text = "Kd:  ", bg = back, fg = fore)
 apLabel = Label(window, text = "Initial AngPos (deg):  ", bg = back, fg = fore)
 avLabel = Label(window, text = "Initial AngVel (deg/s):  ", bg = back, fg = fore)
@@ -52,6 +54,7 @@ blankRow2 = Label(window, text = " ", bg = back)
 blankRow3 = Label(window, text = " ", bg = back)
 
 Kp = Scale(window, from_ = 0, to = 300, orient = HORIZONTAL, bg = back, fg = fore)
+Ki = Scale(window, from_ = 0, to = 300, orient = HORIZONTAL, bg = back, fg = fore)
 Kd = Scale(window, from_ = 0, to = 300, orient = HORIZONTAL, bg = back, fg = fore)
 AP = Scale(window, from_ = -10, to = 10, orient = HORIZONTAL, bg = back, fg = fore)
 AV = Scale(window, from_ = -10, to = 10, orient = HORIZONTAL, bg = back, fg = fore)
@@ -66,39 +69,42 @@ y = Scale(window, from_ = 5, to = 25, orient = HORIZONTAL, bg = back, fg = fore)
 cLabel = Label(window, text = "You found me!", bg = back, fg = fore)
 
 KpLabel.grid(row = 0, column = 0)
-KdLabel.grid(row = 0, column = 2)
+KiLabel.grid(row = 0, column = 2)
+KdLabel.grid(row = 0, column = 4)
 apLabel.grid(row = 1, column = 0)
 avLabel.grid(row = 1, column = 2)
-oLabel.grid(row = 2, column = 0)
-nLabel.grid(row = 2, column = 2)
-fLabel.grid(row = 3, column = 0)
-iLabel.grid(row = 3, column = 2)
-lLabel.grid(row = 4, column = 0)
-tLabel.grid(row = 4, column = 2)
-maxLabel.grid(row = 5, column = 0)
-yLabel.grid(row = 5, column = 2)
-blankRow.grid(row = 6, column = 0)
+oLabel.grid(row = 1, column = 4)
+nLabel.grid(row = 2, column = 0)
+fLabel.grid(row = 2, column = 2)
+iLabel.grid(row = 2, column = 4)
+lLabel.grid(row = 3, column = 0)
+tLabel.grid(row = 3, column = 2)
+maxLabel.grid(row = 3, column = 4)
+yLabel.grid(row = 4, column = 0)
+blankRow.grid(row = 5, column = 0)
 blankRow2.grid(row = 8, column = 0)
 blankRow3.grid(row = 9, column = 0)
 cLabel.grid(row = 10, column = 0)
 
 Kp.grid(row = 0, column = 1)
-Kd.grid(row = 0, column = 3)
+Ki.grid(row = 0, column = 3)
+Kd.grid(row = 0, column = 5)
 AP.grid(row = 1, column = 1)
 AV.grid(row = 1, column = 3)
-o.grid(row = 2, column = 1)
-n.grid(row = 2, column = 3)
-f.grid(row = 3, column = 1)
-I.grid(row = 3, column = 3)
-L.grid(row = 4, column = 1)
-T.grid(row = 4, column = 3)
-MAX.grid(row = 5, column = 1)
-y.grid(row = 5, column = 3)
+o.grid(row = 1, column = 5)
+n.grid(row = 2, column = 1)
+f.grid(row = 2, column = 3)
+I.grid(row = 2, column = 5)
+L.grid(row = 3, column = 1)
+T.grid(row = 3, column = 3)
+MAX.grid(row = 3, column = 5)
+y.grid(row = 4, column = 1)
 
 def textBox():
     global slider
 
     global Kpt
+    global Kit
     global Kdt
     global APt
     global AVt
@@ -112,6 +118,7 @@ def textBox():
     global yt
 
     global Kp
+    global Ki
     global Kd
     global AP
     global AV
@@ -125,6 +132,7 @@ def textBox():
     global y
 
     global Kp2
+    global Ki2
     global Kd2
     global AP2
     global AV2
@@ -142,7 +150,6 @@ def textBox():
     global blankR2
     global blankR3
     global blankR4
-    global blankR5
 
     global blankRow2
     global blankRow3
@@ -150,6 +157,7 @@ def textBox():
     
     if(slider):
         Kp.destroy()
+        Ki.destroy()
         Kd.destroy()
         AP.destroy()
         AV.destroy()
@@ -163,6 +171,7 @@ def textBox():
         y.destroy()
         
         Kpt = Entry(window, textvariable = Kp2, bg = back, fg = fore)
+        Kit = Entry(window, textvariable = Ki2, bg = back, fg = fore)
         Kdt = Entry(window, textvariable = Kd2, bg = back, fg = fore)
         APt = Entry(window, textvariable = AP2, bg = back, fg = fore)
         AVt = Entry(window, textvariable = AV2, bg = back, fg = fore)
@@ -180,7 +189,6 @@ def textBox():
         blankR2 = Label(window, text = " ", bg = back)
         blankR3 = Label(window, text = " ", bg = back)
         blankR4 = Label(window, text = " ", bg = back)
-        blankR5 = Label(window, text = " ", bg = back)
 
         blankRow2.grid(row = 14, column = 0)
         blankRow3.grid(row = 15, column = 0)
@@ -188,47 +196,46 @@ def textBox():
         blankR0.grid(row = 0, column = 0)
 
         KpLabel.grid(row = 1, column = 0)
-        KdLabel.grid(row = 1, column = 2)
+        KiLabel.grid(row = 1, column = 2)
+        KdLabel.grid(row = 1, column = 4)
 
         blankR.grid(row = 2, column = 0)
         
         apLabel.grid(row = 3, column = 0)
         avLabel.grid(row = 3, column = 2)
+        oLabel.grid(row = 3, column = 4)
 
         blankR2.grid(row = 4, column = 0)
         
-        oLabel.grid(row = 5, column = 0)
-        nLabel.grid(row = 5, column = 2)
+        nLabel.grid(row = 5, column = 0)
+        fLabel.grid(row = 5, column = 2)
+        iLabel.grid(row = 5, column = 4)
 
         blankR3.grid(row = 6, column = 0)
-        
-        fLabel.grid(row = 7, column = 0)
-        iLabel.grid(row = 7, column = 2)
+
+        lLabel.grid(row = 7, column = 0)
+        tLabel.grid(row = 7, column = 2)
+        maxLabel.grid(row = 7, column = 4)
 
         blankR4.grid(row = 8, column = 0)
         
-        lLabel.grid(row = 9, column = 0)
-        tLabel.grid(row = 9, column = 2)
-
-        blankR5.grid(row = 10, column = 0)
+        yLabel.grid(row = 9, column = 0)
         
-        maxLabel.grid(row = 11, column = 0)
-        yLabel.grid(row = 11, column = 2)
-        
-        blankRow.grid(row = 12, column = 0)
+        blankRow.grid(row = 10, column = 0)
 
         Kpt.grid(row = 1, column = 1)
-        Kdt.grid(row = 1, column = 3)
+        Kit.grid(row = 1, column = 3)
+        Kdt.grid(row = 1, column = 5)
         APt.grid(row = 3, column = 1)
         AVt.grid(row = 3, column = 3)
-        ot.grid(row = 5, column = 1)
-        nt.grid(row = 5, column = 3)
-        ft.grid(row = 7, column = 1)
-        It.grid(row = 7, column = 3)
-        Lt.grid(row = 9, column = 1)
-        Tt.grid(row = 9, column = 3)
-        MAXt.grid(row = 11, column = 1)
-        yt.grid(row = 11, column = 3)
+        ot.grid(row = 3, column = 5)
+        nt.grid(row = 5, column = 1)
+        ft.grid(row = 5, column = 3)
+        It.grid(row = 5, column = 5)
+        Lt.grid(row = 7, column = 1)
+        Tt.grid(row = 7, column = 3)
+        MAXt.grid(row = 7, column = 5)
+        yt.grid(row = 9, column = 1)
 
         nmButton.grid(row = 13, column = 0)
         textButton.grid(row = 13, column = 1)
@@ -242,6 +249,7 @@ def textBox():
         
     else:
         Kpt.destroy()
+        Kit.destroy()
         Kdt.destroy()
         APt.destroy()
         AVt.destroy()
@@ -258,9 +266,9 @@ def textBox():
         blankR2.destroy()
         blankR3.destroy()
         blankR4.destroy()
-        blankR5.destroy()
 
         Kp = Scale(window, from_ = 0, to = 300, orient = HORIZONTAL, bg = back, fg = fore)
+        Ki = Scale(window, from_ = 0, to = 300, orient = HORIZONTAL, bg = back, fg = fore)
         Kd = Scale(window, from_ = 0, to = 300, orient = HORIZONTAL, bg = back, fg = fore)
         AP = Scale(window, from_ = -10, to = 10, orient = HORIZONTAL, bg = back, fg = fore)
         AV = Scale(window, from_ = -10, to = 10, orient = HORIZONTAL, bg = back, fg = fore)
@@ -274,31 +282,32 @@ def textBox():
         y = Scale(window, from_ = 5, to = 25, orient = HORIZONTAL, bg = back, fg = fore)
 
         KpLabel.grid(row = 0, column = 0)
-        KdLabel.grid(row = 0, column = 2)
+        KiLabel.grid(row = 0, column = 2)
+        KdLabel.grid(row = 0, column = 4)
         apLabel.grid(row = 1, column = 0)
         avLabel.grid(row = 1, column = 2)
-        oLabel.grid(row = 2, column = 0)
-        nLabel.grid(row = 2, column = 2)
-        fLabel.grid(row = 3, column = 0)
-        iLabel.grid(row = 3, column = 2)
-        lLabel.grid(row = 4, column = 0)
-        tLabel.grid(row = 4, column = 2)
-        maxLabel.grid(row = 5, column = 0)
-        yLabel.grid(row = 5, column = 2)
-        blankRow.grid(row = 6, column = 0)
+        oLabel.grid(row = 1, column = 4)
+        nLabel.grid(row = 2, column = 0)
+        fLabel.grid(row = 2, column = 2)
+        iLabel.grid(row = 2, column = 4)
+        lLabel.grid(row = 3, column = 0)
+        tLabel.grid(row = 3, column = 2)
+        maxLabel.grid(row = 3, column = 4)
+        yLabel.grid(row = 4, column = 0)
         
         Kp.grid(row = 0, column = 1)
-        Kd.grid(row = 0, column = 3)
+        Ki.grid(row = 0, column = 3)
+        Kd.grid(row = 0, column = 5)
         AP.grid(row = 1, column = 1)
         AV.grid(row = 1, column = 3)
-        o.grid(row = 2, column = 1)
-        n.grid(row = 2, column = 3)
-        f.grid(row = 3, column = 1)
-        I.grid(row = 3, column = 3)
-        L.grid(row = 4, column = 1)
-        T.grid(row = 4, column = 3)
-        MAX.grid(row = 5, column = 1)
-        y.grid(row = 5, column = 3)
+        o.grid(row = 1, column = 5)
+        n.grid(row = 2, column = 1)
+        f.grid(row = 2, column = 3)
+        I.grid(row = 2, column = 5)
+        L.grid(row = 3, column = 1)
+        T.grid(row = 3, column = 3)
+        MAX.grid(row = 3, column = 5)
+        y.grid(row = 4, column = 1)
         
         slider = True
         textButton.configure(text = "Text Boxes")
@@ -314,6 +323,7 @@ def nightMode():
         window.configure(bg = back)
         
         KpLabel.configure(bg = back, fg = fore)
+        KiLabel.configure(bg = back, fg = fore)
         KdLabel.configure(bg = back, fg = fore)
         apLabel.configure(bg = back, fg = fore)
         avLabel.configure(bg = back, fg = fore)
@@ -337,6 +347,7 @@ def nightMode():
 
         if(slider):
             Kp.configure(bg = back, fg = fore)
+            Ki.configure(bg = back, fg = fore)
             Kd.configure(bg = back, fg = fore)
             AP.configure(bg = back, fg = fore)
             AV.configure(bg = back, fg = fore)
@@ -350,6 +361,7 @@ def nightMode():
             y.configure(bg = back, fg = fore)
         else:
             Kpt.configure(bg = back, fg = fore)
+            Kit.configure(bg = back, fg = fore)
             Kdt.configure(bg = back, fg = fore)
             APt.configure(bg = back, fg = fore)
             AVt.configure(bg = back, fg = fore)
@@ -367,7 +379,6 @@ def nightMode():
             blankR2.configure(bg = back, fg = fore)
             blankR3.configure(bg = back, fg = fore)
             blankR4.configure(bg = back, fg = fore)
-            blankR5.configure(bg = back, fg = fore)
     else:
         night = True
         back = "#383838"
@@ -375,6 +386,7 @@ def nightMode():
         window.configure(bg = back)
 
         KpLabel.configure(bg = back, fg = fore)
+        KiLabel.configure(bg = back, fg = fore)
         KdLabel.configure(bg = back, fg = fore)
         apLabel.configure(bg = back, fg = fore)
         avLabel.configure(bg = back, fg = fore)
@@ -397,6 +409,7 @@ def nightMode():
 
         if(slider):
             Kp.configure(bg = back, fg = fore)
+            Ki.configure(bg = back, fg = fore)
             Kd.configure(bg = back, fg = fore)
             AP.configure(bg = back, fg = fore)
             AV.configure(bg = back, fg = fore)
@@ -410,6 +423,7 @@ def nightMode():
             y.configure(bg = back, fg = fore)
         else:
             Kpt.configure(bg = back, fg = fore)
+            Kit.configure(bg = back, fg = fore)
             Kdt.configure(bg = back, fg = fore)
             APt.configure(bg = back, fg = fore)
             AVt.configure(bg = back, fg = fore)
@@ -427,7 +441,6 @@ def nightMode():
             blankR2.configure(bg = back, fg = fore)
             blankR3.configure(bg = back, fg = fore)
             blankR4.configure(bg = back, fg = fore)
-            blankR5.configure(bg = back, fg = fore)
         
 def plotAV():
     global plotAngVel
@@ -442,6 +455,7 @@ def runSim():
     #state variables
     if(slider):
         P = Kp.get() / 100.0
+        In = Ki.get() / 100.0
         D = Kd.get() / 100.0
         ap = AP.get()
         av = AV.get()
@@ -455,6 +469,7 @@ def runSim():
         yLim = y.get()
     else:
         P = Kp2.get()
+        In = Ki2.get()
         D = Kd2.get()
         ap = AP2.get()
         av = AV2.get()
@@ -471,6 +486,10 @@ def runSim():
             P = 0
         if(P > 3):
             P = 3
+        if(In < 0):
+            In = 0
+        if(In > 3):
+            In = 3
         if(D < 0):
             D = 0
         if(D > 3):
@@ -528,6 +547,7 @@ def runSim():
     
     #other variables
     dR = 3.1416 / 180.0 # degrees to radians
+    intg = 0
 
     #matplotlib stuff
     ts = np.arange(0, time, dt)
@@ -546,7 +566,9 @@ def runSim():
         plt.style.use('default')
     
     while(count < time):
-        PIDout = P * -apPrev + D * -avPrev + off
+        intg -= apPrev * dt
+        
+        PIDout = P * -apPrev + In * intg + D * -avPrev + off
 
         if(PIDout > M + off):
             PIDout = M + off
@@ -600,7 +622,7 @@ def runSim():
     plt.ylabel("Angle (D)")
     plt.xlabel("Time (S)")
     ax.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
-    plt.title('Anvil Tuner 0.31')
+    plt.title('Anvil Tuner 0.41')
     plt.legend()
     plt.show()
 
@@ -609,9 +631,9 @@ textButton = Button(window, text = "Text Boxes", command = textBox, bg = "white"
 avButton = Button(window, text = "Plot AngVel", command = plotAV, bg = "red", fg = 'white')
 runButton = Button(window, text = "Start Sim", command = runSim, bg = "green", fg = 'white')
 
-nmButton.grid(row = 7, column = 0)
-textButton.grid(row = 7, column = 1)
-avButton.grid(row = 7, column = 2)
-runButton.grid(row = 7, column = 3)
+nmButton.grid(row = 6, column = 0)
+textButton.grid(row = 6, column = 1)
+avButton.grid(row = 6, column = 2)
+runButton.grid(row = 6, column = 3)
 
 window.mainloop()
