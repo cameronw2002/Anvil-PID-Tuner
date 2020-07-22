@@ -11,7 +11,7 @@ import random
 
 window = Tk()
 
-window.title("Anvil Tuner 0.41")
+window.title("Anvil Tuner 0.51")
 window.geometry("800x275")
 
 plotAngVel = False
@@ -33,6 +33,8 @@ L2 = IntVar()
 T2 = IntVar()
 MAX2 = IntVar()
 y2 = IntVar()
+slew2 = IntVar()
+gear2 = IntVar()
 
 window.configure(bg = back)
 
@@ -49,9 +51,12 @@ lLabel = Label(window, text = "Lever (cm):  ", bg = back, fg = fore)
 tLabel = Label(window, text = "Sim Length (s):  ", bg = back, fg = fore)
 maxLabel = Label(window, text = "TVC Max Deflection:  ", bg = back, fg = fore)
 yLabel = Label(window, text = "Plot Y axis Range:  ", bg = back, fg = fore)
+slewLabel = Label(window, text = "Servo Slew Rate (deg/s):  ", bg = back, fg = fore)
+gearLabel = Label(window, text = "Gear Ratio:  ", bg = back, fg = fore)
 blankRow = Label(window, text = " ", bg = back)
 blankRow2 = Label(window, text = " ", bg = back)
 blankRow3 = Label(window, text = " ", bg = back)
+cLabel = Label(window, text = "You found me!", bg = back, fg = fore)
 
 Kp = Scale(window, from_ = 0, to = 300, orient = HORIZONTAL, bg = back, fg = fore)
 Ki = Scale(window, from_ = 0, to = 300, orient = HORIZONTAL, bg = back, fg = fore)
@@ -66,7 +71,8 @@ L = Scale(window, from_ = 1, to = 100, orient = HORIZONTAL, bg = back, fg = fore
 T = Scale(window, from_ = 2, to = 25, orient = HORIZONTAL, bg = back, fg = fore)
 MAX = Scale(window, from_ = 1, to = 10, orient = HORIZONTAL, bg = back, fg = fore)
 y = Scale(window, from_ = 5, to = 25, orient = HORIZONTAL, bg = back, fg = fore)
-cLabel = Label(window, text = "You found me!", bg = back, fg = fore)
+slew = Scale(window, from_ = 1, to = 600, orient = HORIZONTAL, bg = back, fg = fore)
+gear = Scale(window, from_ = 1, to = 10, orient = HORIZONTAL, bg = back, fg = fore)
 
 KpLabel.grid(row = 0, column = 0)
 KiLabel.grid(row = 0, column = 2)
@@ -81,6 +87,8 @@ lLabel.grid(row = 3, column = 0)
 tLabel.grid(row = 3, column = 2)
 maxLabel.grid(row = 3, column = 4)
 yLabel.grid(row = 4, column = 0)
+slewLabel.grid(row = 4, column = 2)
+gearLabel.grid(row = 4, column = 4)
 blankRow.grid(row = 5, column = 0)
 blankRow2.grid(row = 8, column = 0)
 blankRow3.grid(row = 9, column = 0)
@@ -99,6 +107,8 @@ L.grid(row = 3, column = 1)
 T.grid(row = 3, column = 3)
 MAX.grid(row = 3, column = 5)
 y.grid(row = 4, column = 1)
+slew.grid(row = 4, column = 3)
+gear.grid(row = 4, column = 5)
 
 def textBox():
     global slider
@@ -116,6 +126,8 @@ def textBox():
     global Tt
     global MAXt
     global yt
+    global slewt
+    global geart
 
     global Kp
     global Ki
@@ -130,6 +142,8 @@ def textBox():
     global T
     global MAX
     global y
+    global slew
+    global gear
 
     global Kp2
     global Ki2
@@ -144,6 +158,8 @@ def textBox():
     global T2
     global MAX2
     global y2
+    global slew2
+    global gear2
 
     global blankR0
     global blankR
@@ -169,6 +185,8 @@ def textBox():
         T.destroy()
         MAX.destroy()
         y.destroy()
+        slew.destroy()
+        gear.destroy()
         
         Kpt = Entry(window, textvariable = Kp2, bg = back, fg = fore)
         Kit = Entry(window, textvariable = Ki2, bg = back, fg = fore)
@@ -183,6 +201,8 @@ def textBox():
         Tt = Entry(window, textvariable = T2, bg = back, fg = fore)
         MAXt = Entry(window, textvariable = MAX2, bg = back, fg = fore)
         yt = Entry(window, textvariable = y2, bg = back, fg = fore)
+        slewt = Entry(window, textvariable = slew2, bg = back, fg = fore)
+        geart = Entry(window, textvariable = gear2, bg = back, fg = fore)
 
         blankR0 = Label(window, text = " ", bg = back)
         blankR = Label(window, text = " ", bg = back)
@@ -220,6 +240,8 @@ def textBox():
         blankR4.grid(row = 8, column = 0)
         
         yLabel.grid(row = 9, column = 0)
+        slewLabel.grid(row = 9, column = 2)
+        gearLabel.grid(row = 9, column = 4)
         
         blankRow.grid(row = 10, column = 0)
 
@@ -236,6 +258,8 @@ def textBox():
         Tt.grid(row = 7, column = 3)
         MAXt.grid(row = 7, column = 5)
         yt.grid(row = 9, column = 1)
+        slewt.grid(row = 9, column = 3)
+        geart.grid(row = 9, column = 5)
 
         nmButton.grid(row = 13, column = 0)
         textButton.grid(row = 13, column = 1)
@@ -261,6 +285,8 @@ def textBox():
         Tt.destroy()
         MAXt.destroy()
         yt.destroy()
+        slewt.destroy()
+        geart.destroy()
         blankR0.destroy()
         blankR.destroy()
         blankR2.destroy()
@@ -280,6 +306,8 @@ def textBox():
         T = Scale(window, from_ = 2, to = 25, orient = HORIZONTAL, bg = back, fg = fore)
         MAX = Scale(window, from_ = 1, to = 10, orient = HORIZONTAL, bg = back, fg = fore)
         y = Scale(window, from_ = 5, to = 25, orient = HORIZONTAL, bg = back, fg = fore)
+        slew = Scale(window, from_ = 1, to = 600, orient = HORIZONTAL, bg = back, fg = fore)
+        gear = Scale(window, from_ = 1, to = 10, orient = HORIZONTAL, bg = back, fg = fore)
 
         KpLabel.grid(row = 0, column = 0)
         KiLabel.grid(row = 0, column = 2)
@@ -294,6 +322,8 @@ def textBox():
         tLabel.grid(row = 3, column = 2)
         maxLabel.grid(row = 3, column = 4)
         yLabel.grid(row = 4, column = 0)
+        slewLabel.grid(row = 4, column = 2)
+        gearLabel.grid(row = 4, column = 4)
         
         Kp.grid(row = 0, column = 1)
         Ki.grid(row = 0, column = 3)
@@ -308,6 +338,8 @@ def textBox():
         T.grid(row = 3, column = 3)
         MAX.grid(row = 3, column = 5)
         y.grid(row = 4, column = 1)
+        slew.grid(row = 4, column = 3)
+        gear.grid(row = 4, column = 5)
         
         slider = True
         textButton.configure(text = "Text Boxes")
@@ -316,6 +348,7 @@ def nightMode():
     global night
     global back
     global fore
+    
     if(night):
         night = False
         back = "white"
@@ -335,6 +368,8 @@ def nightMode():
         tLabel.configure(bg = back, fg = fore)
         maxLabel.configure(bg = back, fg = fore)
         yLabel.configure(bg = back, fg = fore)
+        slewLabel.configure(bg = back, fg = fore)
+        gearLabel.configure(bg = back, fg = fore)
         blankRow.configure(bg = back, fg = fore)
         avButton.configure(fg = 'black')
         runButton.configure(fg = 'black')
@@ -359,6 +394,8 @@ def nightMode():
             T.configure(bg = back, fg = fore)
             MAX.configure(bg = back, fg = fore)
             y.configure(bg = back, fg = fore)
+            slew.configure(bg = back, fg = fore)
+            gear.configure(bg = back, fg = fore)
         else:
             Kpt.configure(bg = back, fg = fore)
             Kit.configure(bg = back, fg = fore)
@@ -373,6 +410,8 @@ def nightMode():
             Tt.configure(bg = back, fg = fore)
             MAXt.configure(bg = back, fg = fore)
             yt.configure(bg = back, fg = fore)
+            slewt.configure(bg = back, fg = fore)
+            geart.configure(bg = back, fg = fore)
 
             blankR0.configure(bg = back, fg = fore)
             blankR.configure(bg = back, fg = fore)
@@ -398,6 +437,8 @@ def nightMode():
         tLabel.configure(bg = back, fg = fore)
         maxLabel.configure(bg = back, fg = fore)
         yLabel.configure(bg = back, fg = fore)
+        slewLabel.configure(bg = back, fg = fore)
+        gearLabel.configure(bg = back, fg = fore)
         blankRow.configure(bg = back, fg = fore)
         avButton.configure(fg = fore)
         runButton.configure(fg = fore)
@@ -421,6 +462,8 @@ def nightMode():
             T.configure(bg = back, fg = fore)
             MAX.configure(bg = back, fg = fore)
             y.configure(bg = back, fg = fore)
+            slew.configure(bg = back, fg = fore)
+            gear.configure(bg = back, fg = fore)
         else:
             Kpt.configure(bg = back, fg = fore)
             Kit.configure(bg = back, fg = fore)
@@ -435,6 +478,8 @@ def nightMode():
             Tt.configure(bg = back, fg = fore)
             MAXt.configure(bg = back, fg = fore)
             yt.configure(bg = back, fg = fore)
+            slewt.configure(bg = back, fg = fore)
+            geart.configure(bg = back, fg = fore)
             
             blankR0.configure(bg = back, fg = fore)
             blankR.configure(bg = back, fg = fore)
@@ -467,6 +512,8 @@ def runSim():
         time = T.get()
         M = MAX.get()
         yLim = y.get()
+        slewRate = slew.get()
+        gearRatio = gear.get()
     else:
         P = Kp2.get()
         In = Ki2.get()
@@ -481,6 +528,8 @@ def runSim():
         time = T2.get()
         M = MAX2.get()
         yLim = y2.get()
+        slewRate = slew2.get()
+        gearRatio = gear2.get()
 
         if(P < 0):
             P = 0
@@ -534,6 +583,14 @@ def runSim():
             yLim = 5
         if(yLim > 30):
             yLim = 30
+        if(slewRate < 1):
+            slewRate = 1
+        if(slewRate > 600):
+            slewRate = 600
+        if(gearRatio < 1):
+            gearRatio = 1
+        if(gearRatio > 10):
+            gearRatio = 10
         
     t = 0 #torque
     aa = 0 #angular accel
@@ -548,6 +605,8 @@ def runSim():
     #other variables
     dR = 3.1416 / 180.0 # degrees to radians
     intg = 0
+    PIDprev = 0
+    PIDactual = 0
 
     #matplotlib stuff
     ts = np.arange(0, time, dt)
@@ -555,6 +614,7 @@ def runSim():
     av_plot = []
     pid_plot = []
     zero_plot = []
+    pida_plot = []
 
     #close the previous graph
     plt.close()
@@ -575,11 +635,38 @@ def runSim():
         if(PIDout < -M + off):
             PIDout = -M + off
 
+        servoCount = 0
+        
+        if(PIDout > PIDactual):
+            
+            while(servoCount < dt):
+                PIDactual += slewRate / gearRatio * servoCount / 9.5
+                
+                if(PIDactual >= PIDout):
+                    PIDactual = (PIDout + PIDprev) / 2
+                    servoCount = dt + 1
+                    
+                servoCount += 0.001
+        elif(PIDout < PIDactual and servoCount == 0):
+            
+            while(servoCount < dt):
+                PIDactual -= slewRate / gearRatio * servoCount / 9.5
+                
+                if(PIDactual <= PIDout):
+                    PIDactual = (PIDout + PIDprev) / 2
+                    servoCount = dt + 1
+                    
+                servoCount += 0.001
+        else:
+            PIDactual = PIDout
+
+        PIDprev = PIDactual
+        
         aaPrev = aa
         apPrev = ap
         avPrev = av
          
-        t = l * F * np.sin(PIDout * dR)
+        t = l * F * np.sin(PIDactual * dR)
             
         aa = t / i
 
@@ -594,6 +681,7 @@ def runSim():
         if(plotAngVel):
             av_plot.append(av)
         pid_plot.append(PIDout - off)
+        pida_plot.append(PIDactual - off)
         zero_plot.append(0)
 
         count += dt
@@ -605,6 +693,7 @@ def runSim():
     if(plotAngVel):
             c_extend(av_plot)
     c_extend(pid_plot)
+    c_extend(pida_plot)
     c_extend(zero_plot)
 
     fig, ax = plt.subplots()
@@ -612,6 +701,8 @@ def runSim():
     plt.ylim(-yLim, yLim)
     plt.plot(ts, ap_plot, label = 'Angular Position')
     plt.plot(ts, pid_plot, label = 'PID Output')
+    plt.plot(ts, pida_plot, label = 'PID Actual')
+    
     if(plotAngVel):
         plt.plot(ts, av_plot, label = 'Angular Velocity')
     if(night):
@@ -622,7 +713,7 @@ def runSim():
     plt.ylabel("Angle (D)")
     plt.xlabel("Time (S)")
     ax.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
-    plt.title('Anvil Tuner 0.41')
+    plt.title('Anvil Tuner 0.51')
     plt.legend()
     plt.show()
 
