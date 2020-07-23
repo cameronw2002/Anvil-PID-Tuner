@@ -11,7 +11,7 @@ import random
 
 window = Tk()
 
-window.title("Anvil Tuner 0.51")
+window.title("Anvil Tuner 0.52")
 window.geometry("800x275")
 
 plotAngVel = False
@@ -605,6 +605,7 @@ def runSim():
     #other variables
     dR = 3.1416 / 180.0 # degrees to radians
     intg = 0
+    PIDout = 0
     PIDprev = 0
     PIDactual = 0
 
@@ -626,15 +627,26 @@ def runSim():
         plt.style.use('default')
     
     while(count < time):
-        intg -= apPrev * dt
+        if(In > 0):
+            intg /= In
         
-        PIDout = P * -apPrev + In * intg + D * -avPrev + off
+        intg -= apPrev * dt
+
+        PIDout = P * -apPrev + D * -avPrev + off
 
         if(PIDout > M + off):
             PIDout = M + off
         if(PIDout < -M + off):
             PIDout = -M + off
 
+        if(In > 0):
+            intg *= In
+            if(intg > M - PIDout + off):
+               intg = (M - PIDout + off)
+            if(intg < -M - PIDout + off):
+               intg = (-M - PIDout + off)
+            PIDout += intg
+            
         servoCount = 0
         
         if(PIDout > PIDactual):
@@ -713,7 +725,7 @@ def runSim():
     plt.ylabel("Angle (D)")
     plt.xlabel("Time (S)")
     ax.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
-    plt.title('Anvil Tuner 0.51')
+    plt.title('Anvil Tuner 0.52')
     plt.legend()
     plt.show()
 
