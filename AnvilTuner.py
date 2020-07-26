@@ -11,12 +11,13 @@ import random
 
 window = Tk()
 
-window.title("Anvil Tuner 0.53")
+window.title("Anvil Tuner 0.63")
 window.geometry("800x275")
 
 plotAngVel = False
 night = True
 slider = True
+File = False
 back = "#383838"
 fore = "white"
 
@@ -264,7 +265,8 @@ def textBox():
         nmButton.grid(row = 13, column = 0)
         textButton.grid(row = 13, column = 1)
         avButton.grid(row = 13, column = 2)
-        runButton.grid(row = 13, column = 3)
+        fileButton.grid(row = 13, column = 3)
+        runButton.grid(row = 13, column = 4)
 
         cLabel.grid(row = 16, column = 0)
         
@@ -375,6 +377,7 @@ def nightMode():
         runButton.configure(fg = 'black')
         nmButton.configure(text = "NightMode", bg = fore, fg = back)
         textButton.configure(bg = fore, fg = back)
+        fileButton.configure(fg = 'black')
         blankRow2.configure(bg = back, fg = fore)
         blankRow3.configure(bg = back, fg = fore)
         cLabel.configure(bg = back, fg = fore)
@@ -442,6 +445,7 @@ def nightMode():
         blankRow.configure(bg = back, fg = fore)
         avButton.configure(fg = fore)
         runButton.configure(fg = fore)
+        fileButton.configure(fg = fore)
         nmButton.configure(text = "BrightMode", bg = fore, fg = back)
         textButton.configure(bg = fore, fg = back)
         blankRow2.configure(bg = back, fg = fore)
@@ -495,6 +499,15 @@ def plotAV():
     else:
         plotAngVel = True
         avButton.configure(bg = "green")
+
+def engFile():
+    global File
+    if(File):
+        File = False
+        fileButton.configure(bg = 'red')
+    else:
+        File = True
+        fileButton.configure(bg = 'green')
     
 def runSim():
     #state variables
@@ -622,17 +635,53 @@ def runSim():
     pid_plot = []
     zero_plot = []
     pida_plot = []
+    force_plot = []
 
     #close the previous graph
     plt.close()
+
+    #read motor file
+    if(File):
+        F = 0
+        currentLine = 0
+        prevLine = -1
+        timeF = [0] * 10000
+        Force = [0] * 10000
+        fStr = ['', '']
+        fSlope = 0
+        fPrev = 0
+        fCount = 1
+        with open('motor.eng', 'r') as motor:
+            for line in motor:
+                if(';' in line):
+                   currentLine += 1
+                   prevLine += 1
+                elif(prevLine != currentLine):
+                    prevLine = currentLine
+                else:
+                    fStr = line.split()
+                    timeF[fCount] = float(fStr[0])
+                    Force[fCount] = float(fStr[1])
+                    if(timeF[fCount] - timeF[fCount - 1] > dt):
+                        fCount += 1
 
     #plot dark mode
     if(night):
         plt.style.use('dark_background')
     else:
         plt.style.use('default')
-    
+
+    fCount = 1
     while(count < time):
+        if(File):
+            if(timeF[fCount] == 0):
+                F = 0
+            else:
+                fSlope = (Force[fCount] - Force[fCount - 1]) / (timeF[fCount] - timeF[fCount - 1])
+                F += fSlope * dt
+            if(F < 0):
+                F = 0
+            
         intg -= apPrev * dt
 
         PIDout = P * -apPrev + D * -avPrev + off
@@ -700,6 +749,11 @@ def runSim():
         pida_plot.append(PIDactual - off)
         zero_plot.append(0)
 
+        if(File):
+            force_plot.append(F)
+            if(count > timeF[fCount]):
+                fCount += 1
+        
         count += dt
 
     def c_extend(array):
@@ -707,7 +761,9 @@ def runSim():
         
     c_extend(ap_plot)
     if(plotAngVel):
-            c_extend(av_plot)
+        c_extend(av_plot)
+    if(File):
+        c_extend(force_plot)
     c_extend(pid_plot)
     c_extend(pida_plot)
     c_extend(zero_plot)
@@ -715,21 +771,22 @@ def runSim():
     fig, ax = plt.subplots()
 
     plt.ylim(-yLim, yLim)
-    plt.plot(ts, ap_plot, label = 'Angular Position')
-    plt.plot(ts, pid_plot, label = 'PID Output')
-    plt.plot(ts, pida_plot, label = 'PID Actual')
+    plt.plot(ts, ap_plot, label = 'Angular Position (d)')
+    plt.plot(ts, pid_plot, label = 'PID Output (d)')
+    plt.plot(ts, pida_plot, label = 'PID Actual (d)')
     
     if(plotAngVel):
-        plt.plot(ts, av_plot, label = 'Angular Velocity')
+        plt.plot(ts, av_plot, label = 'Angular Velocity (d/s)')
+    if(File):
+       plt.plot(ts, force_plot, label = 'Force (N)')
     if(night):
         plt.plot(ts, zero_plot, color = 'WHITE')
     else:
         plt.plot(ts, zero_plot, color = 'BLACK')
 
-    plt.ylabel("Angle (D)")
     plt.xlabel("Time (S)")
     ax.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
-    plt.title('Anvil Tuner 0.53')
+    plt.title('Anvil Tuner 0.63')
     plt.legend()
     plt.show()
 
@@ -737,10 +794,12 @@ nmButton = Button(window, text = "BrightMode", command = nightMode, bg = "white"
 textButton = Button(window, text = "Text Boxes", command = textBox, bg = "white")
 avButton = Button(window, text = "Plot AngVel", command = plotAV, bg = "red", fg = 'white')
 runButton = Button(window, text = "Start Sim", command = runSim, bg = "green", fg = 'white')
+fileButton = Button(window, text = "Use Engine File", command = engFile, bg = "red", fg = "white")
 
 nmButton.grid(row = 6, column = 0)
 textButton.grid(row = 6, column = 1)
 avButton.grid(row = 6, column = 2)
-runButton.grid(row = 6, column = 3)
+fileButton.grid(row = 6, column = 3)
+runButton.grid(row = 6, column = 4)
 
 window.mainloop()
