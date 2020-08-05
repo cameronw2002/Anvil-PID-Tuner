@@ -11,8 +11,8 @@ import random
 
 window = Tk()
 
-window.title("Anvil Tuner 0.63")
-window.geometry("800x275")
+window.title("Anvil Tuner 0.73")
+window.geometry("800x310")
 
 plotAngVel = False
 night = True
@@ -30,12 +30,13 @@ o2 = IntVar()
 n2 = IntVar()
 f2 = IntVar()
 I2 = DoubleVar()
-L2 = IntVar()
+L2 = DoubleVar()
 T2 = IntVar()
 MAX2 = IntVar()
 y2 = IntVar()
 slew2 = IntVar()
 gear2 = IntVar()
+wind2 = IntVar()
 
 window.configure(bg = back)
 
@@ -45,7 +46,7 @@ KdLabel = Label(window, text = "Kd:  ", bg = back, fg = fore)
 apLabel = Label(window, text = "Initial AngPos (deg):  ", bg = back, fg = fore)
 avLabel = Label(window, text = "Initial AngVel (deg/s):  ", bg = back, fg = fore)
 oLabel = Label(window, text = "TVC Misalignment (deg): ", bg = back, fg = fore)
-nLabel = Label(window, text = "Noise:  ", bg = back, fg = fore)
+nLabel = Label(window, text = "Noise (0-100):  ", bg = back, fg = fore)
 fLabel = Label(window, text = "Force (N):  ", bg = back, fg = fore)
 iLabel = Label(window, text = "Inertia:  ", bg = back, fg = fore)
 lLabel = Label(window, text = "Lever (cm):  ", bg = back, fg = fore)
@@ -54,6 +55,7 @@ maxLabel = Label(window, text = "TVC Max Deflection:  ", bg = back, fg = fore)
 yLabel = Label(window, text = "Plot Y axis Range:  ", bg = back, fg = fore)
 slewLabel = Label(window, text = "Servo Slew Rate (deg/s):  ", bg = back, fg = fore)
 gearLabel = Label(window, text = "Gear Ratio:  ", bg = back, fg = fore)
+windLabel = Label(window, text = "Wind (N):  ", bg = back, fg = fore)
 blankRow = Label(window, text = " ", bg = back)
 blankRow2 = Label(window, text = " ", bg = back)
 blankRow3 = Label(window, text = " ", bg = back)
@@ -74,6 +76,7 @@ MAX = Scale(window, from_ = 1, to = 10, orient = HORIZONTAL, bg = back, fg = for
 y = Scale(window, from_ = 5, to = 25, orient = HORIZONTAL, bg = back, fg = fore)
 slew = Scale(window, from_ = 1, to = 600, orient = HORIZONTAL, bg = back, fg = fore)
 gear = Scale(window, from_ = 1, to = 10, orient = HORIZONTAL, bg = back, fg = fore)
+wind = Scale(window, from_ = -10, to = 10, orient = HORIZONTAL, bg = back, fg = fore)
 
 KpLabel.grid(row = 0, column = 0)
 KiLabel.grid(row = 0, column = 2)
@@ -90,10 +93,11 @@ maxLabel.grid(row = 3, column = 4)
 yLabel.grid(row = 4, column = 0)
 slewLabel.grid(row = 4, column = 2)
 gearLabel.grid(row = 4, column = 4)
-blankRow.grid(row = 5, column = 0)
-blankRow2.grid(row = 8, column = 0)
-blankRow3.grid(row = 9, column = 0)
-cLabel.grid(row = 10, column = 0)
+windLabel.grid(row = 5, column = 0)
+blankRow.grid(row = 6, column = 0)
+blankRow2.grid(row = 9, column = 0)
+blankRow3.grid(row = 10, column = 0)
+cLabel.grid(row = 11, column = 0)
 
 Kp.grid(row = 0, column = 1)
 Ki.grid(row = 0, column = 3)
@@ -110,6 +114,7 @@ MAX.grid(row = 3, column = 5)
 y.grid(row = 4, column = 1)
 slew.grid(row = 4, column = 3)
 gear.grid(row = 4, column = 5)
+wind.grid(row = 5, column = 1)
 
 def textBox():
     global slider
@@ -129,6 +134,7 @@ def textBox():
     global yt
     global slewt
     global geart
+    global windt
 
     global Kp
     global Ki
@@ -145,6 +151,7 @@ def textBox():
     global y
     global slew
     global gear
+    global wind
 
     global Kp2
     global Ki2
@@ -161,12 +168,14 @@ def textBox():
     global y2
     global slew2
     global gear2
+    global wind2
 
     global blankR0
     global blankR
     global blankR2
     global blankR3
     global blankR4
+    global blankR5
 
     global blankRow2
     global blankRow3
@@ -188,6 +197,7 @@ def textBox():
         y.destroy()
         slew.destroy()
         gear.destroy()
+        wind.destroy()
         
         Kpt = Entry(window, textvariable = Kp2, bg = back, fg = fore)
         Kit = Entry(window, textvariable = Ki2, bg = back, fg = fore)
@@ -204,12 +214,14 @@ def textBox():
         yt = Entry(window, textvariable = y2, bg = back, fg = fore)
         slewt = Entry(window, textvariable = slew2, bg = back, fg = fore)
         geart = Entry(window, textvariable = gear2, bg = back, fg = fore)
+        windt = Entry(window, textvariable = wind2, bg = back, fg = fore)
 
         blankR0 = Label(window, text = " ", bg = back)
         blankR = Label(window, text = " ", bg = back)
         blankR2 = Label(window, text = " ", bg = back)
         blankR3 = Label(window, text = " ", bg = back)
         blankR4 = Label(window, text = " ", bg = back)
+        blankR5 = Label(window, text = " ", bg = back)
 
         blankRow2.grid(row = 14, column = 0)
         blankRow3.grid(row = 15, column = 0)
@@ -243,8 +255,12 @@ def textBox():
         yLabel.grid(row = 9, column = 0)
         slewLabel.grid(row = 9, column = 2)
         gearLabel.grid(row = 9, column = 4)
+
+        blankR5.grid(row = 10, column = 0)
+
+        windLabel.grid(row = 11, column = 0)
         
-        blankRow.grid(row = 10, column = 0)
+        blankRow.grid(row = 12, column = 0)
 
         Kpt.grid(row = 1, column = 1)
         Kit.grid(row = 1, column = 3)
@@ -261,14 +277,15 @@ def textBox():
         yt.grid(row = 9, column = 1)
         slewt.grid(row = 9, column = 3)
         geart.grid(row = 9, column = 5)
+        windt.grid(row = 11, column = 1)
 
-        nmButton.grid(row = 13, column = 0)
-        textButton.grid(row = 13, column = 1)
-        avButton.grid(row = 13, column = 2)
-        fileButton.grid(row = 13, column = 3)
-        runButton.grid(row = 13, column = 4)
+        nmButton.grid(row = 14, column = 0)
+        textButton.grid(row = 14, column = 1)
+        avButton.grid(row = 14, column = 2)
+        fileButton.grid(row = 14, column = 3)
+        runButton.grid(row = 14, column = 4)
 
-        cLabel.grid(row = 16, column = 0)
+        cLabel.grid(row = 17, column = 0)
         
         slider = False
         textButton.configure(text = "Sliders")
@@ -289,11 +306,13 @@ def textBox():
         yt.destroy()
         slewt.destroy()
         geart.destroy()
+        windt.destroy()
         blankR0.destroy()
         blankR.destroy()
         blankR2.destroy()
         blankR3.destroy()
         blankR4.destroy()
+        blankR5.destroy()
 
         Kp = Scale(window, from_ = 0, to = 300, orient = HORIZONTAL, bg = back, fg = fore)
         Ki = Scale(window, from_ = 0, to = 300, orient = HORIZONTAL, bg = back, fg = fore)
@@ -310,6 +329,7 @@ def textBox():
         y = Scale(window, from_ = 5, to = 25, orient = HORIZONTAL, bg = back, fg = fore)
         slew = Scale(window, from_ = 1, to = 600, orient = HORIZONTAL, bg = back, fg = fore)
         gear = Scale(window, from_ = 1, to = 10, orient = HORIZONTAL, bg = back, fg = fore)
+        wind = gear = Scale(window, from_ = -10, to = 10, orient = HORIZONTAL, bg = back, fg = fore)
 
         KpLabel.grid(row = 0, column = 0)
         KiLabel.grid(row = 0, column = 2)
@@ -326,6 +346,7 @@ def textBox():
         yLabel.grid(row = 4, column = 0)
         slewLabel.grid(row = 4, column = 2)
         gearLabel.grid(row = 4, column = 4)
+        windLabel.grid(row = 5, column = 0)
         
         Kp.grid(row = 0, column = 1)
         Ki.grid(row = 0, column = 3)
@@ -342,6 +363,7 @@ def textBox():
         y.grid(row = 4, column = 1)
         slew.grid(row = 4, column = 3)
         gear.grid(row = 4, column = 5)
+        wind.grid(row = 5, column = 1)
         
         slider = True
         textButton.configure(text = "Text Boxes")
@@ -372,6 +394,7 @@ def nightMode():
         yLabel.configure(bg = back, fg = fore)
         slewLabel.configure(bg = back, fg = fore)
         gearLabel.configure(bg = back, fg = fore)
+        windLabel.configure(bg = back, fg = fore)
         blankRow.configure(bg = back, fg = fore)
         avButton.configure(fg = 'black')
         runButton.configure(fg = 'black')
@@ -399,6 +422,7 @@ def nightMode():
             y.configure(bg = back, fg = fore)
             slew.configure(bg = back, fg = fore)
             gear.configure(bg = back, fg = fore)
+            wind.configure(bg = back, fg = fore)
         else:
             Kpt.configure(bg = back, fg = fore)
             Kit.configure(bg = back, fg = fore)
@@ -415,12 +439,14 @@ def nightMode():
             yt.configure(bg = back, fg = fore)
             slewt.configure(bg = back, fg = fore)
             geart.configure(bg = back, fg = fore)
+            windt.configure(bg = back, fg = fore)
 
             blankR0.configure(bg = back, fg = fore)
             blankR.configure(bg = back, fg = fore)
             blankR2.configure(bg = back, fg = fore)
             blankR3.configure(bg = back, fg = fore)
             blankR4.configure(bg = back, fg = fore)
+            blankR5.configure(bg = back, fg = fore)
     else:
         night = True
         back = "#383838"
@@ -442,6 +468,7 @@ def nightMode():
         yLabel.configure(bg = back, fg = fore)
         slewLabel.configure(bg = back, fg = fore)
         gearLabel.configure(bg = back, fg = fore)
+        windLabel.configure(bg = back, fg = fore)
         blankRow.configure(bg = back, fg = fore)
         avButton.configure(fg = fore)
         runButton.configure(fg = fore)
@@ -468,6 +495,7 @@ def nightMode():
             y.configure(bg = back, fg = fore)
             slew.configure(bg = back, fg = fore)
             gear.configure(bg = back, fg = fore)
+            wind.configure(bg = back, fg = fore)
         else:
             Kpt.configure(bg = back, fg = fore)
             Kit.configure(bg = back, fg = fore)
@@ -484,12 +512,14 @@ def nightMode():
             yt.configure(bg = back, fg = fore)
             slewt.configure(bg = back, fg = fore)
             geart.configure(bg = back, fg = fore)
+            windt.configure(bg = back, fg = fore)
             
             blankR0.configure(bg = back, fg = fore)
             blankR.configure(bg = back, fg = fore)
             blankR2.configure(bg = back, fg = fore)
             blankR3.configure(bg = back, fg = fore)
             blankR4.configure(bg = back, fg = fore)
+            blankR5.configure(bg = back, fg = fore)
         
 def plotAV():
     global plotAngVel
@@ -527,6 +557,7 @@ def runSim():
         yLim = y.get()
         slewRate = slew.get()
         gearRatio = gear.get()
+        Wind = wind.get()
     else:
         P = Kp2.get()
         In = Ki2.get()
@@ -543,6 +574,7 @@ def runSim():
         yLim = y2.get()
         slewRate = slew2.get()
         gearRatio = gear2.get()
+        Wind = wind2.get()
 
         if(P < 0):
             P = 0
@@ -604,6 +636,10 @@ def runSim():
             gearRatio = 1
         if(gearRatio > 10):
             gearRatio = 10
+        if(Wind < -10):
+            Wind = -10
+        if(Wind > 10):
+            Wind = 10
         
     t = 0 #torque
     aa = 0 #angular accel
@@ -626,7 +662,7 @@ def runSim():
     intg = 0
     PIDout = 0
     PIDprev = 0
-    PIDactual = 0
+    PIDactual = off
 
     #matplotlib stuff
     ts = np.arange(0, time, dt)
@@ -701,7 +737,7 @@ def runSim():
             PIDout += intg * In
             
         servoCount = 0
-        
+
         if(PIDout > PIDactual):
             
             while(servoCount < dt):
@@ -731,7 +767,7 @@ def runSim():
         apPrev = ap
         avPrev = av
          
-        t = l * F * np.sin(PIDactual * dR)
+        t = l * F * np.sin(PIDactual * dR) + ((l / 2) * Wind)
             
         aa = t / i
 
@@ -746,7 +782,7 @@ def runSim():
         if(plotAngVel):
             av_plot.append(av)
         pid_plot.append(PIDout - off)
-        pida_plot.append(PIDactual - off)
+        pida_plot.append(PIDactual)
         zero_plot.append(0)
 
         if(File):
@@ -786,7 +822,7 @@ def runSim():
 
     plt.xlabel("Time (S)")
     ax.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
-    plt.title('Anvil Tuner 0.63')
+    plt.title('Anvil Tuner 0.73')
     plt.legend()
     plt.show()
 
@@ -796,10 +832,10 @@ avButton = Button(window, text = "Plot AngVel", command = plotAV, bg = "red", fg
 runButton = Button(window, text = "Start Sim", command = runSim, bg = "green", fg = 'white')
 fileButton = Button(window, text = "Use Engine File", command = engFile, bg = "red", fg = "white")
 
-nmButton.grid(row = 6, column = 0)
-textButton.grid(row = 6, column = 1)
-avButton.grid(row = 6, column = 2)
-fileButton.grid(row = 6, column = 3)
-runButton.grid(row = 6, column = 4)
+nmButton.grid(row = 7, column = 0)
+textButton.grid(row = 7, column = 1)
+avButton.grid(row = 7, column = 2)
+fileButton.grid(row = 7, column = 3)
+runButton.grid(row = 7, column = 4)
 
 window.mainloop()
