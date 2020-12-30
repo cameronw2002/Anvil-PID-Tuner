@@ -1,5 +1,5 @@
 """
-Made by cheesefacejoe
+Made by Cameron Williams
 
 initially ported to python by Dr.B
 """
