@@ -733,8 +733,8 @@ def runSim():
                intg = (M - PIDout + off)
             if(intg < -M - PIDout + off):
                intg = (-M - PIDout + off)
+            PIDout += intg
             intg /= In
-            PIDout += intg * In
             
         servoCount = 0
 
